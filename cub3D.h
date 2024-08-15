@@ -6,7 +6,7 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 17:43:29 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/08/15 15:05:03 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/08/15 18:40:28 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,13 +30,13 @@
 typedef struct s_map
 {
 	int			fd;
-	char		*ceil;
+	int			ceil;
 	char		*east;
 	char		*west;
 	char		**map;
 	char		**file;
 	char		*north;
-	char		*floor;
+	int			floor;
 	char		*south;
 }				t_map;
 

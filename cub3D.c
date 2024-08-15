@@ -6,7 +6,7 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 17:42:38 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/08/15 16:03:05 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/08/15 19:53:46 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -158,21 +158,58 @@ char	**get_file_content(t_cub3D *game, int fd)
 	return (free(lines), file);
 }
 
-// int	ft_colors(t_cub3D *game, char *s)
-// {
-// 	char	**split;
+int	ft_atoi_rgb(t_cub3D *game, char **str)
+{
+	int	nb;
 
-// 	split = ft_split(s, ',');
-// }
+	nb = 0;
+	while (ft_isspace(**str))
+		(*str)++;
+	if (**str == '-')
+		ft_errors(game, "Error.");
+	if (**str == '+')
+		(*str)++;
+	while (ft_isdigit(**str))
+	{
+		nb = (nb * 10) + (((**str) - '0'));
+		if (nb > 255)
+			ft_errors(game, "Error.");
+		(*str)++;
+	}
+	if (**str && !ft_isdigit(**str) && !ft_isspace(**str))
+		ft_errors(game, "Error.");
+	return (nb);
+}
+
+int	create_trgb(int t, int r, int g, int b)
+{
+	return (t << 24 | r << 16 | g << 8 | b);
+}
+
+int	ft_colors(t_cub3D *game, char *s)
+{
+	char	**split;
+	int		rgb;
+	int		r;
+	int		g;
+	int		b;
+
+	split = ft_split(s, ',');
+	rgb = 0;
+	r = ft_atoi_rgb(game, &split[0]);
+	g = ft_atoi_rgb(game, &split[1]);
+	b = ft_atoi_rgb(game, &split[2]);
+	if (split[3])
+		return (free_double(split), ft_errors(game, "Error."), 1);
+	rgb = create_trgb(0, r, g, b);
+	return (rgb);
+}
 
 int	check_textures(t_cub3D *game, t_map *map, char *s, int flag)
 {
-	if (!access(s, F_OK | R_OK))
+	if (flag != 5 && flag != 6 && !access(s, F_OK | R_OK))
 	{
-		if (flag != 5 && flag != 6)
-			ft_extension(game, s, ".xpm");
-		if (flag == 5 || flag == 6)
-			ft_colors(game, s);
+		ft_extension(game, s, ".xpm");
 		if (flag == 1)
 			map->north = ft_strdup(s);
 		else if (flag == 2)
@@ -181,14 +218,17 @@ int	check_textures(t_cub3D *game, t_map *map, char *s, int flag)
 			map->west = ft_strdup(s);
 		else if (flag == 4)
 			map->east = ft_strdup(s);
-		else if (flag == 5)
-			map->floor = ft_strdup(s);
-		else if (flag == 6)
-			map->ceil = ft_strdup(s);
 		return (1);
 	}
+	else if (flag == 5 || flag == 6)
+	{
+		if (flag == 5)
+			map->floor = ft_colors(game, s);
+		else
+			map->ceil = ft_colors(game, s);
+	}
 	else
-		ft_errors(game, "Error.");
+		ft_errors(game, "Error 1.");
 	return (0);
 }
 
@@ -206,6 +246,10 @@ int	one_of_map_elements(t_cub3D *game, t_map *map, char **s)
 			check_textures(game, map, s[1], 3);
 		else if (!ft_strcmp(s[0], "EA"))
 			check_textures(game, map, s[1], 4);
+		else if (!ft_strcmp(s[0], "F"))
+			check_textures(game, map, s[1], 5);
+		else if (!ft_strcmp(s[0], "C"))
+			check_textures(game, map, s[1], 6);
 		return (1);
 	}
 	else
@@ -239,18 +283,59 @@ int	get_basic_elements(t_cub3D *game, t_map *map)
 	return (0);
 }
 
+int	skip_white_lines(char **s, int *i)
+{
+	while ((*s)[(*i)])
+	{
+		if (ft_isspace((*s)[*i]))
+		{
+			while ((*s)[*i] && ft_isspace((*s)[*i]))
+				(*i)++;
+		}
+		if (!(*s)[*i])
+			(*i)++;
+		else
+			break ;
+	}
+	return (0);
+}
+
+// int	get_map_info(t_cub3D *game, char **map_1, int i, int *h)
+// {
+// 	int	w;
+// 	int	j;
+
+// 	j = i;
+// 	printf("? >> %s\n", map_1[j]);
+// 	while (map_1[j])
+// 	{
+		
+// 	}
+// }
+
 char	**get_map(t_cub3D *game, t_map *map, int start)
 {
 	char	**map_1;
-	char	**map_1;
+	// int		height;
+	// int		width;
 	int		i;
 
 	i = start;
+	// height = 0;
+	// width = 0;
 	map_1 = map->file;
-	while (map_1[i])
-	{
+	skip_white_lines(map_1, &i);
+	if (!map_1[i])
+		ft_errors(game, "Error.");
+	// width = get_map_info(game, map_1, i, &height);
+	// printf("width > %s\n", width);
+	// printf("height > %s\n", height);
+	printf("? >> %s\n", map_1[i]);
+	// while (map_1[i])
+	// {
 		
-	}
+	// }
+	return (NULL);
 }
 
 void	ft_check_map(t_cub3D *game, t_map *map, char *mapfile)
@@ -262,7 +347,14 @@ void	ft_check_map(t_cub3D *game, t_map *map, char *mapfile)
 		ft_errors(game, "Error.");
 	map->file = get_file_content(game, map->fd);
 	start = get_basic_elements(game, map);
-	printf("start >> %d\n", start);
+	printf("/* Map infos after check */\n");
+	printf("/* ceil  > %d */\n", map->ceil);
+	printf("/* east  > %s */\n", map->east);
+	printf("/* west  > %s */\n", map->west);
+	printf("/* north > %s */\n", map->north);
+	printf("/* floor > %d */\n", map->floor);
+	printf("/* south > %s */\n", map->south);
+	(void)start;
 	map->map = get_map(game, map, start);
 }
 
