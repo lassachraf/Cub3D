@@ -6,7 +6,7 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 17:43:29 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/08/15 18:40:28 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/08/16 14:37:17 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,6 +38,10 @@ typedef struct s_map
 	char		*north;
 	int			floor;
 	char		*south;
+	int			n;
+	int			s;
+	int			e;
+	int			w;
 }				t_map;
 
 typedef struct	s_player
