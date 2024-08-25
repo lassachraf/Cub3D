@@ -6,7 +6,7 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 17:42:38 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/08/16 16:40:31 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/08/23 17:22:51 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,77 +14,83 @@
 
 /* Memory part : Starts */
 
-void	small_add_back(t_gc **gc, t_gc *new_node)
-{
-	t_gc	*curr;
+// void	small_add_back(t_gc **gc, t_gc *new_node)
+// {
+// 	t_gc	*curr;
 
-	if (*gc)
-	{
-		curr = *gc;
-		while (curr->next)
-			curr = curr->next;
-		curr->next = new_node;
-	}
-	else
-		*gc = new_node;
-}
+// 	if (!gc || !new_node)
+// 	{
+// 		printf("yeppppppppp\n");
+// 		return ;
+// 	}
+// 	printf("gc: %p, new_node: %p\n", (void*)*gc, (void*)new_node);
+// 	if (*gc)
+// 	{
+// 		curr = *gc;
+// 		while (curr && curr->next)
+// 			curr = curr->next;
+// 		curr->next = new_node;
+// 	}
+// 	else
+// 		*gc = new_node;
+// }
 
-void	gc_add(t_cub3D *game, void *ptr)
-{
-	t_gc	*new_node;
+// void	gc_add(t_cub3D *game, void *ptr)
+// {
+// 	t_gc	*new_node;
 
-	new_node = malloc(sizeof(t_gc));
-	if (!new_node)
-	{
-		perror("Allocation failed.");
-		exit(2);
-	}
-	new_node->ptr = ptr;
-	new_node->next = NULL;
-	small_add_back(&game->gc, new_node);
-}
+// 	new_node = malloc(sizeof(t_gc));
+// 	if (!new_node)
+// 	{
+// 		perror("Allocation failed.");
+// 		exit(2);
+// 	}
+// 	new_node->ptr = ptr;
+// 	new_node->next = NULL;
+// 	small_add_back(&game->gc, new_node);
+// }
 
-void	*ft_malloc(t_cub3D *game, size_t size)
-{
-	char	*memory;
+// void	*ft_malloc(t_cub3D *game, size_t size)
+// {
+// 	char	*memory;
 
-	memory = malloc(size);
-	if (!memory)
-		return (ft_errors(game, "Allocation failed."), NULL);
-	gc_add(game, memory);
-	return (memory);
-}
+// 	memory = malloc(size);
+// 	if (!memory)
+// 		return (ft_errors(game, "Allocation failed."), NULL);
+// 	gc_add(game, memory);
+// 	return (memory);
+// }
 
-void	add_split_to_gc(t_cub3D *game, char **split)
-{
-	int	i;
+// void	add_split_to_gc(t_cub3D *game, char **split)
+// {
+// 	int	i;
 
-	i = 0;
-	while (split[i])
-	{
-		gc_add(game, split[i]);
-		i++;
-	}
-}
+// 	i = 0;
+// 	while (split[i])
+// 	{
+// 		gc_add(game, split[i]);
+// 		i++;
+// 	}
+// }
 
-void	gc_free_all(t_cub3D *game)
-{
-	t_gc	*current;
-	t_gc	*next;
+// void	gc_free_all(t_cub3D *game)
+// {
+// 	t_gc	*current;
+// 	t_gc	*next;
 
-	if (!game || !game->gc)
-		return ;
-	current = game->gc;
-	while (current)
-	{
-		next = current->next;
-		if (current->ptr)
-			free(current->ptr);
-		free(current);
-		current = next;
-	}
-	game->gc = NULL;
-}
+// 	if (!game || !game->gc)
+// 		return ;
+// 	current = game->gc;
+// 	while (current)
+// 	{
+// 		next = current->next;
+// 		if (current->ptr)
+// 			free(current->ptr);
+// 		free(current);
+// 		current = next;
+// 	}
+// 	game->gc = NULL;
+// }
 
 /* Memory part : Ends */
 
@@ -154,10 +160,10 @@ void	ft_extension(t_cub3D *game, char *argv, char *ext)
 			&& strlen(argv) > 4)
 			return ;
 		else
-			ft_errors(game, "Error.");
+			ft_errors(game, "Error 17.");
 	}
 	else
-		ft_errors(game, "Error.");
+		ft_errors(game, "Error 16.");
 }
 
 char	**get_file_content(t_cub3D *game, int fd)
@@ -178,7 +184,7 @@ char	**get_file_content(t_cub3D *game, int fd)
 	}
 	if (!lines)
 	{
-		ft_errors(game, "Error.");
+		ft_errors(game, "Error 15.");
 	}
 	file = ft_split(lines, '\n');
 	add_split_to_gc(game, file);
@@ -220,18 +226,18 @@ int	ft_atoi_rgb(t_cub3D *game, char **str)
 	while (ft_isspace(**str))
 		(*str)++;
 	if (**str == '-')
-		ft_errors(game, "Error.");
+		ft_errors(game, "Error 14.");
 	if (**str == '+')
 		(*str)++;
 	while (ft_isdigit(**str))
 	{
 		nb = (nb * 10) + (((**str) - '0'));
 		if (nb > 255)
-			ft_errors(game, "Error.");
+			ft_errors(game, "Error 13.");
 		(*str)++;
 	}
 	if (**str && !ft_isdigit(**str) && !ft_isspace(**str))
-		ft_errors(game, "Error.");
+		ft_errors(game, "Error 12.");
 	return (nb);
 }
 
@@ -249,14 +255,27 @@ int	ft_colors(t_cub3D *game, char *s)
 	int		b;
 
 	split = ft_split(s, ',');
+	add_split_to_gc(game, split);
 	rgb = 0;
 	r = ft_atoi_rgb(game, &split[0]);
 	g = ft_atoi_rgb(game, &split[1]);
 	b = ft_atoi_rgb(game, &split[2]);
 	if (split[3])
-		return (free_double(split), ft_errors(game, "Error."), 1);
+		return (free_double(split), ft_errors(game, "Error 11."), 1);
 	rgb = create_trgb(0, r, g, b);
 	return (rgb);
+}
+
+void	add_to_gc(t_cub3D *game, t_map *map, int flag)
+{
+	if (flag == 1)
+		gc_add(game, map->north);
+	else if (flag == 2)
+		gc_add(game, map->south);
+	else if (flag == 3)
+		gc_add(game, map->west);
+	else if (flag == 4)
+		gc_add(game, map->east);
 }
 
 int	check_textures(t_cub3D *game, t_map *map, char *s, int flag)
@@ -272,7 +291,7 @@ int	check_textures(t_cub3D *game, t_map *map, char *s, int flag)
 			map->west = ft_strdup(s);
 		else if (flag == 4)
 			map->east = ft_strdup(s);
-		return (1);
+		return (add_to_gc(game, map, flag), 1);
 	}
 	else if (flag == 5 || flag == 6)
 	{
@@ -282,7 +301,7 @@ int	check_textures(t_cub3D *game, t_map *map, char *s, int flag)
 			map->ceil = ft_colors(game, s);
 	}
 	else
-		ft_errors(game, "Error.");
+		ft_errors(game, "Error 10.");
 	return (0);
 }
 
@@ -331,14 +350,16 @@ int	get_basic_elements(t_cub3D *game, t_map *map)
 		if (one_of_map_elements(game, map, value))
 			counter++;
 		else
-			ft_errors(game, "Error.");
+			ft_errors(game, "Error 9.");
 	}
+	if (counter != 6)
+		ft_errors(game, "Error 100.");
 	return (0);
 }
 
 int	is_valid_element(t_cub3D *game, t_map *map, char c)
 {
-	if (c == ' ' || c == '1' || c == '0')
+	if (c == ' ' || c == '1' || c == '0' || c == 'D')
 		return (1);
 	else if (c == 'W' || c == 'N' || c == 'S' || c == 'E')
 	{
@@ -353,7 +374,7 @@ int	is_valid_element(t_cub3D *game, t_map *map, char c)
 		return (1);
 	}
 	else
-		ft_errors(game, "Error.");
+		ft_errors(game, "Error 8.");
 	return (0);
 }
 
@@ -370,7 +391,7 @@ int	get_map_info(t_cub3D *game, char **map_1, int i, int *h)
 		k = 0;
 		skip_whitespaces(map_1[j], &k);
 		if (map_1[j][k] != '1')
-			ft_errors(game, "Error.");
+			ft_errors(game, "Error 7.");
 		while (map_1[j][k])
 			k++;
 		if (w < k)
@@ -386,7 +407,7 @@ char	*ft_strncpy_2(char *dest, char *src, unsigned int n)
 	unsigned int	i;
 
 	i = 0;
-	while (src[i] != '\0' && i < n)
+	while (src[i] && i < n)
 	{
 		dest[i] = src[i];
 		++i;
@@ -396,6 +417,7 @@ char	*ft_strncpy_2(char *dest, char *src, unsigned int n)
 		dest[i] = ' ';
 		i++;
 	}
+	dest[i] = 0;
 	return (dest);
 }
 
@@ -412,7 +434,6 @@ char	**alloc_and_fill_map(t_cub3D *game, char **map_1, int w, int h)
 	{
 		map[i] = ft_malloc(game, sizeof(char) * (w + 1));
 		ft_strncpy_2(map[i++], map_1[j++], w);
-		map[w + 1] = 0;
 	}
 	map[h] = 0;
 	return (map);
@@ -431,7 +452,7 @@ int	check_last_element(t_cub3D *game, char *s)
 	if (s[i] == '1')
 		return (1);
 	else
-		ft_errors(game, "Error.");
+		ft_errors(game, "Error 6.");
 	return (1);
 }
 
@@ -456,7 +477,12 @@ void	check_map_element(t_cub3D *game, t_map *map)
 	}
 	i = map->e + map->s + map->n + map->w;
 	if (i != 1)
-		ft_errors(game, "Error.");
+		ft_errors(game, "Error 5.");
+}
+
+void	surrounded_map(t_cub3D *game, t_map *map)
+{
+	
 }
 
 void	whole_map_check(t_cub3D *game, t_map *map, int h)
@@ -469,12 +495,13 @@ void	whole_map_check(t_cub3D *game, t_map *map, int h)
 	check_map_element(game, map);
 	/* CHECK1 >> SURROUNDED BY WALLS */
 	// first line check ;
+	surrounded_map(game, map);
 	while (s[0][i])
 	{
 		if (s[0][i] == '1' || s[0][i] == ' ')
 			i++;
 		else
-			ft_errors(game, "Error.");
+			ft_errors(game, "Error 4.");
 	}
 	i = 0;
 	// last line check;
@@ -504,7 +531,7 @@ char	**get_map(t_cub3D *game, t_map *map, int start)
 	map_1 = map->file;
 	skip_white_lines(map_1, &i);
 	if (!map_1[i])
-		ft_errors(game, "Error.");
+		ft_errors(game, "Error 2.");
 	width = get_map_info(game, map_1, i, &height);
 	map_2 = alloc_and_fill_map(game, &map_1[i], width, height);
 	map->map = map_2;
@@ -516,10 +543,12 @@ void	ft_check_map(t_cub3D *game, t_map *map, char *mapfile)
 {
 	int	start;
 
+	start = 0;
 	map->fd = open(mapfile, O_RDONLY);
 	if (map->fd < 0)
-		ft_errors(game, "Error.");
+		ft_errors(game, "Error 1.");
 	map->file = get_file_content(game, map->fd);
+	close(map->fd);
 	start = get_basic_elements(game, map);
 	map->map = get_map(game, map, start);
 	print_map_info(map);
@@ -564,14 +593,16 @@ int	main(int ac, char **av)
 	game = (t_cub3D *)malloc(sizeof(t_cub3D));
 	if (!game)
 		ft_errors(NULL, "Allocation failed.");
-	ft_bzero(game, (sizeof(game)));
+	ft_bzero(game, (sizeof(t_cub3D)));
 	gc = (t_gc *)malloc(sizeof(t_gc));
 	if (!gc)
 		ft_errors(NULL, "Allocation failed.");
-	ft_bzero(gc, (sizeof(gc)));
+	ft_bzero(gc, (sizeof(t_gc)));
 	game->gc = gc;
 	game = all_check(game, av[1]);
 	// cub3D(game);
 	gc_free_all(game);
+	free(game->gc);
+	free(game);
 	return (0);
 }
