@@ -6,7 +6,7 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 17:42:38 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/08/26 11:53:16 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/08/26 16:17:48 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -56,11 +56,71 @@ void	print_map_info(t_map *map)
 	printf("/* --------------- MAP --------------- */\n");
 }
 
-void    cub3D(t_cub3D *game)
+void	update()
 {
+	// update all things that need to be updated;
+	// change player position
+}
+
+void    my_mlx_pixel_put(t_cub3D *game, int x, int y, int color)
+{
+    char    *dst;
+
+    dst = game->addr + (y * game->szl + x * (game->bpp / 8));
+    *(unsigned int*)dst = color;
+}
+
+void    render_square(t_cub3D *game, int x, int y, int color)
+{
+    int i, j;
+    int square_size = TILE_SIZE;
+
+    for (i = 0; i < square_size; i++)
+    {
+        for (j = 0; j < square_size; j++)
+        {
+            my_mlx_pixel_put(game, x + i, y + j, color);
+        }
+    }
+}
+
+void    render_map(t_cub3D *game)
+{
+    int x, y;
+    int color;
+
+    y = -1;
+	color = 0;
+	while (game->map->map[++y])
+    {
+		x = -1;
+        while (game->map->map[y][++x])
+        {
+            if (game->map->map[y][x] == '1')
+                color = 0x00FF0000; // Red for walls
+            else if (game->map->map[y][x] == '0')
+                color = 0x00CCCCCC; // Grey for empty space
+            else if (game->map->map[y][x] == 'D')
+                color = 0x000000FF; // Blue for doors
+            render_square(game, x * TILE_SIZE, y * TILE_SIZE, color);
+        }
+    }
+    mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
+}
+
+
+void	cub3D(t_cub3D *game)
+{
+	int	x;
+	int	y;
+
+	x = game->map->width * TILE_SIZE;
+	y = game->map->height * TILE_SIZE;
 	game->mlx = mlx_init();
-	game->win = mlx_new_window(game->mlx, 600, 300,"Cub3D !");
-	mlx_string_put(game->mlx, game->win, 100, 50, 128, "That's our cub3D !");
+	game->win = mlx_new_window(game->mlx, x, y,"Cub3D !");
+	game->img = mlx_new_image(game->mlx, x, y);
+	game->addr = mlx_get_data_addr(game->img, &game->bpp, &game->szl, &game->end);
+	render_map(game);
 	mlx_hook(game->win, 2, 1L << 0, ft_esc, game);
 	mlx_hook(game->win, 17, 0, ft_exit, game);
 	mlx_loop(game->mlx);
@@ -89,3 +149,11 @@ int	main(int ac, char **av)
 	clean_cub3D(game);
 	return (0);
 }
+
+// Things maybe used later :
+
+// const angle = 60 * (PI * 180)
+
+// const num_rays = length_of_view;
+
+// rayAngle += angle / num_rays; 

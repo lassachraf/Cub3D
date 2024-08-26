@@ -6,7 +6,7 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 17:43:29 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/08/26 10:38:37 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/08/26 15:58:25 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,9 +20,11 @@
 # include <stdio.h>
 # include <stdlib.h>
 # include <string.h>
+# include <math.h>
 
-# define RED	"\033[1;31m"	// for errors !
-# define RESET	"\033[0m"		// color reset !
+# define	RED			"\033[1;31m"	// for errors !
+# define	RESET		"\033[0m"		// color reset !
+# define	TILE_SIZE	32
 
 typedef struct s_map
 {
@@ -59,7 +61,12 @@ typedef struct s_cub3D
 	t_gc		*gc;
 	void		*mlx;
 	void		*win;
+	void		*img;
 	t_map		*map;
+	char		*addr;
+	int			bpp;
+	int			end;
+	int			szl;
 	t_player	*player;
 }				t_cub3D;
 
