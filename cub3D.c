@@ -6,7 +6,7 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 17:42:38 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/08/26 16:17:48 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/08/26 18:47:13 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,50 @@ void    render_square(t_cub3D *game, int x, int y, int color)
     }
 }
 
+void    render_line(t_cub3D *game, int cx, int cy, int length, int color, char direction)
+{
+    int end_x = cx, end_y = cy;
+
+    if (direction == 'N') // North
+        end_y -= length;
+    else if (direction == 'S') // South
+        end_y += length;
+    else if (direction == 'W') // West
+        end_x -= length;
+    else if (direction == 'E') // East
+        end_x += length;
+
+    int dx = abs(end_x - cx), sx = cx < end_x ? 1 : -1;
+    int dy = -abs(end_y - cy), sy = cy < end_y ? 1 : -1;
+    int err = dx + dy, e2;
+
+    while (1)
+    {
+        my_mlx_pixel_put(game, cx, cy, color);
+        if (cx == end_x && cy == end_y) break;
+        e2 = 2 * err;
+        if (e2 >= dy) { err += dy; cx += sx; }
+        if (e2 <= dx) { err += dx; cy += sy; }
+    }
+}
+
+void    render_circle(t_cub3D *game, int cx, int cy, int radius, int color)
+{
+    int x, y;
+
+    for (y = -radius; y <= radius; y++)
+    {
+        for (x = -radius; x <= radius; x++)
+        {
+            if (x * x + y * y <= radius * radius)
+            {
+                my_mlx_pixel_put(game, cx + x, cy + y, color);
+            }
+        }
+    }
+	// render_line(game, cx, cy, radius * 3, 0x0099FFFF, game->map->map[cy][cx]);
+}
+
 void    render_map(t_cub3D *game)
 {
     int x, y;
@@ -97,17 +141,20 @@ void    render_map(t_cub3D *game)
         while (game->map->map[y][++x])
         {
             if (game->map->map[y][x] == '1')
-                color = 0x00FF0000; // Red for walls
+                render_square(game, x * TILE_SIZE, y * TILE_SIZE, 0x00FF0000);
             else if (game->map->map[y][x] == '0')
-                color = 0x00CCCCCC; // Grey for empty space
+                render_square(game, x * TILE_SIZE, y * TILE_SIZE, 0x00CCCCCC);
             else if (game->map->map[y][x] == 'D')
-                color = 0x000000FF; // Blue for doors
-            render_square(game, x * TILE_SIZE, y * TILE_SIZE, color);
+                render_square(game, x * TILE_SIZE, y * TILE_SIZE, 0x000000FF);
+			else if (game->map->map[y][x] != ' ')
+			{
+                render_square(game, x * TILE_SIZE, y * TILE_SIZE, 0x00CCCCCC);
+            	render_circle(game, x * TILE_SIZE, y * TILE_SIZE, 6, 0x0099FFFF);
+			}
         }
     }
     mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
 }
-
 
 void	cub3D(t_cub3D *game)
 {

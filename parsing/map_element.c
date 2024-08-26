@@ -6,7 +6,7 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:20:52 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/08/26 10:25:08 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/08/26 18:32:06 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,16 +91,51 @@ int	get_basic_elements(t_cub3D *game, t_map *map)
 	return (0);
 }
 
+int	is_it_player(char c)
+{
+	return (c == 'W' || c == 'N' || c == 'S' || c == 'E');
+}
+
+void	set_player_info(t_cub3D *game, t_player *player)
+{
+	int	i;
+	int	j;
+
+	i = -1;
+	player->radius = 2;
+	player->movespeed = 3;
+	player->rotationspeed = 3 * (PI / 180);
+	player->rotationangle = (PI / 2);
+	while (game->map->map[++i])
+	{
+		j = -1;
+		while (game->map->map[i][++j])
+		{
+			if (is_it_player(game->map->map[i][j]))
+			{
+				player->x = i;
+				player->y = j;
+			}
+		}
+	}
+	game->player = player;	
+}
+
 t_cub3D	*all_check(t_cub3D *game, char *mapfile)
 {
 	t_map		*map;
+	t_player	*player;
 
 	map = malloc(sizeof(t_map));
 	if (!map)
 		ft_errors(game, "Malloc error.");
 	gc_add(game, map);
-	ft_bzero(map, sizeof(t_map));
+	player = malloc(sizeof(t_player));
+	if (!player)
+		ft_errors(game, "Malloc error.");
+	ft_bzero(map, sizeof(t_player));
 	ft_extension(game, mapfile, ".cub");
 	ft_check_map(game, map, mapfile);
+	set_player_info(game, player);
 	return (game);
 }

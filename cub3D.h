@@ -6,7 +6,7 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 17:43:29 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/08/26 15:58:25 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/08/26 17:20:09 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 # include <string.h>
 # include <math.h>
 
+# define	PI			3.14159265359
 # define	RED			"\033[1;31m"	// for errors !
 # define	RESET		"\033[0m"		// color reset !
 # define	TILE_SIZE	32
@@ -47,7 +48,14 @@ typedef struct s_map
 
 typedef struct	s_player
 {
-	
+	int			x;
+	int			y;
+	long		radius;
+	long		movespeed;
+	long		rotationspeed;
+	long		turndirection;
+	long		walkdirection;
+	long		rotationangle;
 }				t_player;
 
 typedef	struct	s_gc
