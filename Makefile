@@ -6,7 +6,7 @@
 #    By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/12 17:38:15 by alassiqu          #+#    #+#              #
-#    Updated: 2024/08/19 18:55:11 by alassiqu         ###   ########.fr        #
+#    Updated: 2024/08/26 10:33:49 by alassiqu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -23,10 +23,18 @@ HEADER		:=	cub3D.h
 GNL			:=	get-next-line/get_next_line_utils.c		\
 				get-next-line/get_next_line.c
 
-MEMORY		:=	memory/memory.c
+MEMORY		:=	memory/memory.c							\
+				memory/mem.c
+
+PARSING		:=	parsing/colors.c						\
+				parsing/file_parsing.c					\
+				parsing/map_element.c					\
+				parsing/map_parsing.c					\
+				parsing/map_utils.c
 
 SRCS		:=	$(GNL)									\
 				$(MEMORY)								\
+				$(PARSING)								\
 				cub3D.c
 OBJS		:=	$(SRCS:.c=.o)
 
@@ -40,7 +48,7 @@ GREEN		:=	\033[1;32m
 RED			:=	\033[1;31m
 RESET		:=	\033[0m
 YELLOW		:=	\033[1;33m
-UCYAN		:=	\033[0;35m
+UCYAN		:=	\033[0;34m
 
 all:	$(NAME)
 
@@ -64,7 +72,7 @@ $(LIBFT):
 $(MLX):
 	@echo "$(RED)** Building MLX. **$(GREEN)"
 	@cd libraries/mlx && ./configure && make
-	@echo "$(RED)** Libft builded succesfully. **$(RESET)"
+	@echo "$(RED)** MLX builded succesfully. **$(RESET)"
 
 $(NAME)	:	$(LIBFT) $(MLX) $(OBJS)
 	@echo "$(RED)** Linking. **$(YELLOW)"
