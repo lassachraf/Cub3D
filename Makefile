@@ -6,7 +6,7 @@
 #    By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/08/12 17:38:15 by alassiqu          #+#    #+#              #
-#    Updated: 2024/08/26 10:33:49 by alassiqu         ###   ########.fr        #
+#    Updated: 2024/08/29 16:34:35 by alassiqu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,10 +32,15 @@ PARSING		:=	parsing/colors.c						\
 				parsing/map_parsing.c					\
 				parsing/map_utils.c
 
+MAP			:=	map/rendering.c							\
+				map/utils.c
+
 SRCS		:=	$(GNL)									\
+				$(MAP)									\
 				$(MEMORY)								\
 				$(PARSING)								\
 				cub3D.c
+
 OBJS		:=	$(SRCS:.c=.o)
 
 LIBFT		:=	libraries/libft/libft.a

@@ -6,81 +6,32 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 17:42:38 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/08/29 15:43:17 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/08/29 20:58:30 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3D.h"
 
-int is_walkable(t_cub3D *game, double new_x, double new_y)
+long    deg_to_rad(long deg)
 {
-    int map_x = (int)new_x;
-    int map_y = (int)new_y;
-
-    if (map_x >= 0 && map_x < game->map->width && 
-        map_y >= 0 && map_y < game->map->height && 
-        game->map->map[map_y][map_x] != '1') {
-        return (1);
-    }
-	printf("Not walkable !");
-    return (0);
+    return (deg * (PI / 180));
 }
 
-void	update(t_cub3D *game)
+long    rad_to_deg(long rad)
 {
-	float	new_x;
-	float	new_y;
-	float	movestep;
-
-	movestep = game->player->walkdirection * game->player->movespeed;
-	new_x = game->player->x + cos(game->player->rotationangle) * movestep;
-	new_y = game->player->y + sin(game->player->rotationangle) * movestep;
-	printf("new_x >> %f\n", new_x);
-	if (is_walkable(game, new_x, new_y))
-	{
-		printf("Walkable\n");
-		game->player->x = new_x;
-		game->player->y = new_y;
-	}
-	game->player->rotationangle += game->player->turndirection * game->player->rotationspeed;
-	printf("update !\n");
+    return (rad * (180 / PI));
 }
+
+long    distanceAB(int ax, int ay, int bx, int by)
+{
+    return (sqrt(pow((bx - ax), 2) + pow((by - ay), 2)));
+}
+
 
 int	ft_exit(t_cub3D *game)
 {
 	clean_cub3D(game);
 	exit(0);
-}
-
-void	reset(int keycode, t_cub3D *game)
-{
-	if (keycode == LEFT_ARROW)
-		game->player->turndirection = 0;
-	else if (keycode == UP_ARROW)
-		game->player->walkdirection = 0;
-	else if (keycode == RIGHT_ARROW)
-		game->player->turndirection = 0;
-	else if (keycode == DOWN_ARROW)
-		game->player->walkdirection = 0;
-}
-
-int	ft_moving(int keycode, t_cub3D *game)
-{
-	if (keycode == ESC_KEY)
-		ft_exit(game);
-	else if (keycode == LEFT_ARROW)
-		game->player->turndirection = -1;
-	else if (keycode == UP_ARROW)
-		game->player->walkdirection = 1;
-	else if (keycode == RIGHT_ARROW)
-		game->player->turndirection = 1;
-	else if (keycode == DOWN_ARROW)
-		game->player->walkdirection = -1;
-	update(game);
-	// render();
-	reset(keycode, game);
-	render_map_2(game);
-	return (0);
 }
 
 void	ft_errors(t_cub3D *game, char *msg)
@@ -114,133 +65,82 @@ void	print_map_info(t_map *map)
 	printf("/* --------------- MAP --------------- */\n");
 }
 
-void    my_mlx_pixel_put(t_cub3D *game, float x, float y, int color)
-{
-	if (x < 0 || y < 0 || x >= game->map->width * TILE_SIZE || y >= game->map->height * TILE_SIZE) 
-        return ;
-    char    *dst;
+/* ****************************************************** */
 
-    dst = game->addr + (int)(y * game->szl + x * (game->bpp / 8));
-    *(unsigned int*)dst = color;
-}
+void render_ray(t_cub3D *game, float ray_angle, int color) {
+    // Calculate the end position of the ray
+    float end_x = game->player->x * TILE_SIZE + cos(ray_angle) * 30;
+    float end_y = game->player->y * TILE_SIZE + sin(ray_angle) * 30;
 
-void    render_square(t_cub3D *game, float x, float y, int color)
-{
-    int i, j;
-    int square_size = TILE_SIZE;
-
-    for (i = 0; i < square_size; i++)
-    {
-        for (j = 0; j < square_size; j++)
-        {
-            my_mlx_pixel_put(game, x + i, y + j, color);
-        }
-    }
-}
-
-void    render_line(t_cub3D *game, int cx, int cy, int length, int color)
-{
-	long end_x = cx + cos(game->player->rotationangle) * length;
-	long end_y = cy + sin(game->player->rotationangle) * length;
-
-	// printf("Render Line: Start (%d, %d), End (%ld, %ld), Angle: %f\n", cx, cy, end_x, end_y, game->player->rotationangle);
-    long dx = labs(end_x - cx), sx = cx < end_x ? 1 : -1;
-    long dy = -labs(end_y - cy), sy = cy < end_y ? 1 : -1;
+    // Bresenham's line algorithm for drawing the ray
+    long start_x = game->player->x * TILE_SIZE;
+    long start_y = game->player->y * TILE_SIZE;
+    long dx = labs((long)end_x - start_x), sx = start_x < end_x ? 1 : -1;
+    long dy = -labs((long)end_y - start_y), sy = start_y < end_y ? 1 : -1;
     long err = dx + dy, e2;
 
-    while (1)
-    {
-        my_mlx_pixel_put(game, cx, cy, color);
-        if (cx == end_x && cy == end_y) break;
+    while (1) {
+        // Draw the pixel at (start_x, start_y)
+        my_mlx_pixel_put(game, start_x, start_y, color); // Draw with the specified color
+
+        // Check if the line has reached the end point
+        if (start_x == (long)end_x && start_y == (long)end_y) break;
+
+        // Update error term and positions
         e2 = 2 * err;
-        if (e2 >= dy) { err += dy; cx += sx; }
-        if (e2 <= dx) { err += dx; cy += sy; }
+        if (e2 >= dy) { err += dy; start_x += sx; }
+        if (e2 <= dx) { err += dx; start_y += sy; }
     }
 }
 
-void    render_circle(t_cub3D *game, int cx, int cy, int radius, int color)
+void render_rays(t_cub3D *game) {
+    float ray_angle = game->player->rotationangle - (game->fov_ang / 2);
+    float step_angle = game->fov_ang / game->wov; // Calculate the angle step for each ray
+    int i;
+
+    // Render rays one by one to fill the FOV
+    for (i = 0; i < game->wov; i++) {
+        render_ray(game, ray_angle, 0x6600FF00); // Light green color with transparency
+        ray_angle += step_angle; // Move to the next ray angle
+    }
+}
+
+void	castAllRays(t_cub3D *game)
 {
-    int x, y;
+	t_rays	*rayzz;
+	long	*rays;
+	int	columnid = 0;
+	float rayangle = game->player->rotationangle - (game->fov_ang / 2);
 
-    for (y = -radius; y <= radius; y++)
-    {
-        for (x = -radius; x <= radius; x++)
-        {
-            if (x * x + y * y <= radius * radius)
-            {
-                my_mlx_pixel_put(game, cx + x, cy + y, color);
-            }
-        }
-    }
+	int i = -1;
+	rayzz = ft_malloc(game, sizeof(t_rays));
+	rays = ft_malloc(game, (sizeof(long) * game->wov));
+	while (++i < game->wov)
+	{
+		rays[i] = rayangle;
+        rayangle += game->fov_ang / game->wov;
+        columnid++;
+	}
+	rayzz->lst_of_rays = rays;
+	game->rays = rayzz;
 }
 
-void    render_map_2(t_cub3D *game)
-{
-    int x, y;
-    int color;
+// void render_rays(t_cub3D *game)
+// {
+//     int i;
 
-    y = -1;
-	color = 0;
-	while (game->map->map[++y])
-    {
-		x = -1;
-        while (game->map->map[y][++x])
-        {
-            if (game->map->map[y][x] == '1')
-                render_square(game, x * TILE_SIZE, y * TILE_SIZE, 0x00FF0000);
-            else if (game->map->map[y][x] == 'D')
-                render_square(game, x * TILE_SIZE, y * TILE_SIZE, 0x000000FF);
-			else if (game->map->map[y][x] == ' ')
-				render_square(game, x * TILE_SIZE, y * TILE_SIZE, 0x0000);
-			else
-			{
-                render_square(game, x * TILE_SIZE, y * TILE_SIZE, 0x00CCCCCC);
-            	render_circle(game, (game->player->x * TILE_SIZE), (game->player->y * TILE_SIZE), 6, 0x0099FFFF);
-				render_line(game, (game->player->x * TILE_SIZE), (game->player->y * TILE_SIZE), 6 * 3, 0x0099FFFF);
-			}
-        }
-    }
-    mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
-}
-
-void    render_map(t_cub3D *game)
-{
-    int x, y;
-    int color;
-
-    y = -1;
-	color = 0;
-	while (game->map->map[++y])
-    {
-		x = -1;
-        while (game->map->map[y][++x])
-        {
-            if (game->map->map[y][x] == '1')
-                render_square(game, x * TILE_SIZE, y * TILE_SIZE, 0x00FF0000);
-            else if (game->map->map[y][x] == 'D')
-                render_square(game, x * TILE_SIZE, y * TILE_SIZE, 0x000000FF);
-			else if (game->map->map[y][x] == ' ')
-                render_square(game, x * TILE_SIZE, y * TILE_SIZE, 0x0000);
-            else
-			{
-				// printf("1 :: x >> %d, y >> %d, char > %c\n", x, y, game->map->map[y][x]);
-                render_square(game, x * TILE_SIZE, y * TILE_SIZE, 0x00CCCCCC);
-			}
-        }
-    }
-    mlx_put_image_to_window(game->mlx, game->win, game->img, 0, 0);
-}
+//     i = -1;
+//     while (++i < game->wov)
+//         render_ray(game, game->rays->lst_of_rays[i]);
+// }
 
 void	cub3D(t_cub3D *game)
 {
-	int	x;
-	int	y;
-
-	x = game->map->width * TILE_SIZE;
-	y = game->map->height * TILE_SIZE;
+	game->wov = game->map->width * TILE_SIZE;
+	game->hov = game->map->height * TILE_SIZE;
 	game->mlx = mlx_init();
-	game->win = mlx_new_window(game->mlx, x, y,"Cub3D !");
-	game->img = mlx_new_image(game->mlx, x, y);
+	game->win = mlx_new_window(game->mlx, game->wov, game->wov,"Cub3D !");
+	game->img = mlx_new_image(game->mlx, game->wov, game->wov);
 	game->addr = mlx_get_data_addr(game->img, &game->bpp, &game->szl, &game->end);
 	render_map(game);
 	mlx_hook(game->win, 2, 1L << 0, ft_moving, game);
@@ -267,6 +167,7 @@ int	main(int ac, char **av)
 	ft_bzero(gc, (sizeof(t_gc)));
 	game->gc = gc;
 	game = all_check(game, av[1]);
+	game->fov_ang = deg_to_rad(60);
 	cub3D(game);
 	clean_cub3D(game);
 	return (0);

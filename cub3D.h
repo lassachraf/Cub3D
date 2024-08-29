@@ -6,7 +6,7 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 17:43:29 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/08/29 13:14:44 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/08/29 20:48:02 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,8 @@
 # define	RED			"\033[1;31m"	// for errors !
 # define	RESET		"\033[0m"		// color reset !
 # define	TILE_SIZE	32
+
+// # define	WALL_STRIP	4
 
 # define	ESC_KEY		65307
 
@@ -64,12 +66,18 @@ typedef struct	s_player
 	float		y;
 	int			count;
 	long		radius;
-	long		movespeed;
+	float		movespeed;
 	float		rotationspeed;
 	int			turndirection;
 	int			walkdirection;
 	float		rotationangle;
 }				t_player;
+
+typedef	struct s_rays
+{
+	long	*lst_of_rays;
+}				t_rays;
+
 
 typedef	struct	s_gc
 {
@@ -80,22 +88,25 @@ typedef	struct	s_gc
 typedef struct s_cub3D
 {
 	t_gc		*gc;
+	int			bpp;
+	int			end;
+	int			szl;
+	int			wov;
+	int			hov;
 	void		*mlx;
 	void		*win;
 	void		*img;
 	t_map		*map;
 	char		*addr;
-	int			bpp;
-	int			end;
-	int			szl;
+	float		fov_ang;
+	float		nb_rays;
+	float		df_rays;
+	t_rays		*rays;
 	t_player	*player;
 }				t_cub3D;
 
 
 /* Parsing */
-
-void    render_map(t_cub3D *game);
-void    render_map_2(t_cub3D *game);
 
 /* get_next_line */
 char	*get_next_line(int fd);
@@ -192,10 +203,40 @@ char	*freeing_join(char *s, char *s1);
 // Function that clean cub3D.
 void	clean_cub3D(t_cub3D *game);
 
+/* Map */
+
+void    render_square(t_cub3D *game, float x, float y, int color);
+
+void    render_line(t_cub3D *game, int cx, int cy, int length, int color);
+
+void    render_circle(t_cub3D *game, int cx, int cy, int radius, int color);
+
+void    render_map_2(t_cub3D *game);
+
+void    render_map(t_cub3D *game);
+
+void    my_mlx_pixel_put(t_cub3D *game, float x, float y, int color);
+
+int		is_walkable(t_cub3D *game, double new_x, double new_y);
+
+void	update(t_cub3D *game);
+
+void	reset(int keycode, t_cub3D *game);
+
+int		ft_moving(int keycode, t_cub3D *game);
+
+/* ************************************** */
+
+void	castAllRays(t_cub3D *game);
+
+void 	render_rays(t_cub3D *game);
+
 /* Printing */
 
 void	ft_errors(t_cub3D *game, char *msg);
 
 void	print_map_info(t_map *map);
+
+int		ft_exit(t_cub3D *game);
 
 #endif

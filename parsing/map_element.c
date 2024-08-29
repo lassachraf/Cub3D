@@ -6,7 +6,7 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:20:52 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/08/29 14:10:55 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/08/29 15:59:41 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -115,7 +115,7 @@ void	set_player_info(t_cub3D *game, t_player *player)
 
 	i = -1;
 	player->radius = 2;
-	player->movespeed = 2;
+	player->movespeed = 0.2;
 	player->rotationspeed = 3 * (PI / 180);
 	while (game->map->map[++i])
 	{
