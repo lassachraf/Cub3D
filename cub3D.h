@@ -6,7 +6,7 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 17:43:29 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/08/26 17:20:09 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/08/29 13:14:44 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,6 +26,18 @@
 # define	RED			"\033[1;31m"	// for errors !
 # define	RESET		"\033[0m"		// color reset !
 # define	TILE_SIZE	32
+
+# define	ESC_KEY		65307
+
+# define	LEFT_ARROW	65361
+# define	UP_ARROW	65362
+# define	RIGHT_ARROW	65363
+# define	DOWN_ARROW	65364
+
+# define	A_KEY		97
+# define	W_KEY		119
+# define	D_KEY		100
+# define	S_KEY		115
 
 typedef struct s_map
 {
@@ -48,14 +60,15 @@ typedef struct s_map
 
 typedef struct	s_player
 {
-	int			x;
-	int			y;
+	float		x;
+	float		y;
+	int			count;
 	long		radius;
 	long		movespeed;
-	long		rotationspeed;
-	long		turndirection;
-	long		walkdirection;
-	long		rotationangle;
+	float		rotationspeed;
+	int			turndirection;
+	int			walkdirection;
+	float		rotationangle;
 }				t_player;
 
 typedef	struct	s_gc
@@ -80,6 +93,9 @@ typedef struct s_cub3D
 
 
 /* Parsing */
+
+void    render_map(t_cub3D *game);
+void    render_map_2(t_cub3D *game);
 
 /* get_next_line */
 char	*get_next_line(int fd);

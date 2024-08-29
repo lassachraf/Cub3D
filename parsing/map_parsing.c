@@ -6,7 +6,7 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 09:54:21 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/08/26 15:11:01 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/08/29 14:31:50 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -109,8 +109,5 @@ void	ft_check_map(t_cub3D *game, t_map *map, char *mapfile)
 	close(map->fd);
 	start = get_basic_elements(game, map);
 	map->map = get_map(game, map, start);
-	print_map_info(map);
-	// map->width *= TILE_SIZE;
-	// map->height *= TILE_SIZE;
 	game->map = map;
 }

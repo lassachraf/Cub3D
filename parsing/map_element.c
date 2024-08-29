@@ -6,7 +6,7 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/26 10:20:52 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/08/26 18:32:06 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/08/29 14:10:55 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,18 @@ int	is_it_player(char c)
 	return (c == 'W' || c == 'N' || c == 'S' || c == 'E');
 }
 
+void	adjust_rotation(t_player *player, char **map)
+{
+	if (map[(int)player->y][(int)player->x] == 'N')
+		player->rotationangle = -PI / 2;
+    else if (map[(int)player->y][(int)player->x] == 'S')
+        player->rotationangle = PI / 2;
+    else if (map[(int)player->y][(int)player->x] == 'E')
+        player->rotationangle = 0;
+    else if (map[(int)player->y][(int)player->x] == 'W')
+        player->rotationangle = PI;
+}
+
 void	set_player_info(t_cub3D *game, t_player *player)
 {
 	int	i;
@@ -103,9 +115,8 @@ void	set_player_info(t_cub3D *game, t_player *player)
 
 	i = -1;
 	player->radius = 2;
-	player->movespeed = 3;
+	player->movespeed = 2;
 	player->rotationspeed = 3 * (PI / 180);
-	player->rotationangle = (PI / 2);
 	while (game->map->map[++i])
 	{
 		j = -1;
@@ -113,12 +124,16 @@ void	set_player_info(t_cub3D *game, t_player *player)
 		{
 			if (is_it_player(game->map->map[i][j]))
 			{
-				player->x = i;
-				player->y = j;
+				player->x = j;
+				player->y = i;
+				player->count++;
 			}
 		}
 	}
-	game->player = player;	
+	if (player->count != 1)
+		ft_errors(game, "Error.");
+	adjust_rotation(player, game->map->map);
+	game->player = player;
 }
 
 t_cub3D	*all_check(t_cub3D *game, char *mapfile)
@@ -133,7 +148,7 @@ t_cub3D	*all_check(t_cub3D *game, char *mapfile)
 	player = malloc(sizeof(t_player));
 	if (!player)
 		ft_errors(game, "Malloc error.");
-	ft_bzero(map, sizeof(t_player));
+	ft_bzero(player, sizeof(t_player));
 	ft_extension(game, mapfile, ".cub");
 	ft_check_map(game, map, mapfile);
 	set_player_info(game, player);
