@@ -6,7 +6,7 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/12 17:43:29 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/08/29 20:48:02 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/08/31 14:16:01 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # include <string.h>
 # include <math.h>
 
-# define	PI			3.14159265359
+# define	PI			3.14159265358979323846
 # define	RED			"\033[1;31m"	// for errors !
 # define	RESET		"\033[0m"		// color reset !
 # define	TILE_SIZE	32
@@ -73,9 +73,21 @@ typedef struct	s_player
 	float		rotationangle;
 }				t_player;
 
+typedef struct	s_ray
+{
+    float   	distance;
+	long		ray_angle;
+	int			facing_up;
+    float   	wall_hit_x;
+    float   	wall_hit_y;
+	int			facing_down;
+	int			facing_left;
+	int			facing_right;
+}           	t_ray;
+
 typedef	struct s_rays
 {
-	long	*lst_of_rays;
+	t_ray		*lst_of_rays;
 }				t_rays;
 
 
@@ -98,6 +110,8 @@ typedef struct s_cub3D
 	void		*img;
 	t_map		*map;
 	char		*addr;
+	int			deltax;
+	int			deltay;
 	float		fov_ang;
 	float		nb_rays;
 	float		df_rays;
@@ -217,7 +231,7 @@ void    render_map(t_cub3D *game);
 
 void    my_mlx_pixel_put(t_cub3D *game, float x, float y, int color);
 
-int		is_walkable(t_cub3D *game, double new_x, double new_y);
+int		is_walkable(t_cub3D *game, float new_x, float new_y);
 
 void	update(t_cub3D *game);
 
@@ -230,6 +244,8 @@ int		ft_moving(int keycode, t_cub3D *game);
 void	castAllRays(t_cub3D *game);
 
 void 	render_rays(t_cub3D *game);
+
+float	normalize_angle(float x);
 
 /* Printing */
 

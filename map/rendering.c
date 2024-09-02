@@ -6,7 +6,7 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 16:27:33 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/08/29 16:36:17 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/08/30 13:15:05 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -82,7 +82,7 @@ void    render_map_2(t_cub3D *game)
 			{
                 render_square(game, x * TILE_SIZE, y * TILE_SIZE, 0x00CCCCCC);
             	render_circle(game, (game->player->x * TILE_SIZE), (game->player->y * TILE_SIZE), 3, 0x0099FFFF);
-				render_line(game, (game->player->x * TILE_SIZE), (game->player->y * TILE_SIZE), 6 * 3, 0x0099FFFF);
+				// render_line(game, (game->player->x * TILE_SIZE), (game->player->y * TILE_SIZE), 6 * 3, 0x0099FFFF);
 			}
         }
     }
@@ -111,7 +111,8 @@ void    render_map(t_cub3D *game)
 			{
                 render_square(game, x * TILE_SIZE, y * TILE_SIZE, 0x00CCCCCC);
             	render_circle(game, (game->player->x * TILE_SIZE), (game->player->y * TILE_SIZE), 3, 0x0099FFFF);
-				render_line(game, (game->player->x * TILE_SIZE), (game->player->y * TILE_SIZE), 6 * 3, 0x0099FFFF);
+				// render_line(game, (game->player->x * TILE_SIZE), (game->player->y * TILE_SIZE), 6 * 3, 0x0099FFFF);
+                render_rays(game);
 			}
         }
     }

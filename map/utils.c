@@ -6,30 +6,32 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/29 16:30:44 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/08/29 20:51:06 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/09/02 02:19:42 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3D.h"
 
-void    my_mlx_pixel_put(t_cub3D *game, float x, float y, int color)
+void	my_mlx_pixel_put(t_cub3D *game, float x, float y, int color)
 {
-	if (x < 0 || y < 0 || x >= game->map->width * TILE_SIZE || y >= game->map->height * TILE_SIZE) 
-        return ;
-    char    *dst;
+	char	*dst;
 
+	if (x < 0 || y < 0 || x >= game->map->width * TILE_SIZE
+		|| y >= game->map->height * TILE_SIZE)
+		return ;
     dst = game->addr + (int)(y * game->szl + x * (game->bpp / 8));
     *(unsigned int*)dst = color;
 }
 
-int is_walkable(t_cub3D *game, double new_x, double new_y)
+int is_walkable(t_cub3D *game, float new_x, float new_y)
 {
     int map_x = (int)new_x;
     int map_y = (int)new_y;
 
-    if (map_x >= 0 && map_x < game->map->width && 
-        map_y >= 0 && map_y < game->map->height && 
-        game->map->map[map_y][map_x] != '1')
+    if (map_x >= 0 && map_x < game->map->width
+		&& map_y >= 0 && map_y < game->map->height
+        && game->map->map[map_y][map_x] != '1'
+        && game->map->map[map_y][map_x] != 'D')
         return (1);
     return (0);
 }
@@ -49,7 +51,7 @@ void	update(t_cub3D *game)
 		game->player->y = new_y;
 	}
 	game->player->rotationangle += game->player->turndirection * game->player->rotationspeed;
-	castAllRays(game);
+	// castAllRays(game);
 }
 
 void	reset(int keycode, t_cub3D *game)
@@ -80,5 +82,6 @@ int	ft_moving(int keycode, t_cub3D *game)
 	reset(keycode, game);
 	render_map_2(game);
 	render_rays(game);
+	castAllRays(game);
 	return (0);
 }
