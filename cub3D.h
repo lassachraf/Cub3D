@@ -5,8 +5,8 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/12 17:43:29 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/08/31 14:16:01 by alassiqu         ###   ########.fr       */
+/*   Created: 2024/09/05 14:58:06 by alassiqu          #+#    #+#             */
+/*   Updated: 2024/09/13 20:40:21 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,17 +47,21 @@ typedef struct s_map
 	int			s;
 	int			e;
 	int			w;
+	int			f;
+	int			c;
 	int			fd;
 	int			ceil;
+	int			start;
 	int			floor;
 	int			width;
-	int			height;
 	char		*east;
 	char		*west;
 	char		**map;
+	int			height;
 	char		**file;
 	char		*north;
 	char		*south;
+	int			counter;
 }				t_map;
 
 typedef struct	s_player
@@ -76,7 +80,7 @@ typedef struct	s_player
 typedef struct	s_ray
 {
     float   	distance;
-	long		ray_angle;
+	float		ray_angle;
 	int			facing_up;
     float   	wall_hit_x;
     float   	wall_hit_y;
@@ -119,76 +123,46 @@ typedef struct s_cub3D
 	t_player	*player;
 }				t_cub3D;
 
-
-/* Parsing */
-
 /* get_next_line */
+
 char	*get_next_line(int fd);
 
-// Function "ASCII TO INTEGER" customize for colors.
-int		ft_atoi_rgb(t_cub3D *game, char **str);
+/* parsing functions */
 
-// Function of mlx functions that create a TRGB.
-int		create_trgb(int t, int r, int g, int b);
+// Function that check and get textures, ceil and floor colors. 
+int		textures_and_colors_element(t_cub3D *game, t_map *map, char **line);
 
-// Main function that create colors. 
-int		ft_colors(t_cub3D *game, char *s);
+// Function that parse every line of the map file.
+void	parse_line(t_cub3D *game, t_map *map, char **line);
 
-// Function that checks for a specified extension.
-void	ft_extension(t_cub3D *game, char *argv, char *ext);
+// Function that checks the validity of the map.
+void	check_surrounded(t_cub3D *game, t_map *maps);
 
-// Function that get file content.
-char	**get_file_content(t_cub3D *game, int fd);
+// Function that check if c is a player.
+int		is_it_player(char c);
 
-// Function that skip white lines.
-int		skip_white_lines(char **s, int *i);
+//
+void	adjust_rotation(t_player *player, char **map);
 
-// Function that skip leading whitespaces in a line.
-void	skip_whitespaces(char *s, int *i);
+// Function that allocate and fill map.
+void	alloc_and_fill_map(t_cub3D *game, t_map *map);
 
-// Function that get the width and height of the map and check for it first and last element.
-int		get_map_info(t_cub3D *game, char **map, int i, int *h);
+//
+char	*add_and_strdup(t_cub3D *game, void *pointer);
 
-// Function that alloc and fill the map.
-char	**alloc_and_fill_map(t_cub3D *game, char **map_1, int w, int h);
+// Function that checks the file extension.
+void	ft_extension(t_cub3D *game, char *mapfile, char *ext);
 
-// Function that check if all map element are valid.
-void	check_map_element(t_cub3D *game, t_map *map);
+// Function that check if c is a valid map element.
+int		is_map_element(char c);
 
-// Function that check first element of the line.
-void	check_first_element(t_cub3D *game, char **map, int *j, int *k);
+//
+int		basic_checks(t_cub3D *game, t_map *map, char **line);
 
-// Function that check first element of the line.
-int		check_last_element(t_cub3D *game, char *s);
+// Main parsing funtion.
+t_cub3D	*parsing(t_cub3D *game, char *av);
 
-// Function that checks if the map is surrounded bu walls.
-void	check_surrounded(t_cub3D *game, char **map, int nb_line, int col_len);
-
-// Function to get the map.
-char	**get_map(t_cub3D *game, t_map *map, int start);
-
-// A custome copy function to copy the map.
-char	*ft_strncpy_2(char *dest, char *src, unsigned int n);
-
-// Function to check is the character valid.
-int		is_valid_element(t_cub3D *game, t_map *map, char c);
-
-// Function that check and set the textures.
-int		check_textures(t_cub3D *game, t_map *map, char *s, int flag);
-
-// Function get the textures and colors from the map file.
-int		get_basic_elements(t_cub3D *game, t_map *map);
-
-// Function that check is the element is one of map one's.
-int		one_of_map_elements(t_cub3D *game, t_map *map, char **s);
-
-// Main function that checks and get map.
-void	ft_check_map(t_cub3D *game, t_map *map, char *mapfile);
-
-// Main function that contains all checks.
-t_cub3D	*all_check(t_cub3D *game, char *mapfile);
-
-/* Memory */
+/* memory functions */
 
 // Function that add back an address to the garbage collector.
 void	small_add_back(t_gc **gc, t_gc *new_node);
@@ -212,47 +186,47 @@ void	add_to_gc(t_cub3D *game, t_map *map, int flag);
 void	free_double(char **s);
 
 // Function that join two words and free the first one.
-char	*freeing_join(char *s, char *s1);
+char	*free_and_join(char *line, char **lines);
 
 // Function that clean cub3D.
 void	clean_cub3D(t_cub3D *game);
 
-/* Map */
+/* printing functions */
 
-void    render_square(t_cub3D *game, float x, float y, int color);
+// Function that prints a char double pointer. 
+void	print_double(char **dbl);
 
-void    render_line(t_cub3D *game, int cx, int cy, int length, int color);
-
-void    render_circle(t_cub3D *game, int cx, int cy, int radius, int color);
-
-void    render_map_2(t_cub3D *game);
-
-void    render_map(t_cub3D *game);
-
-void    my_mlx_pixel_put(t_cub3D *game, float x, float y, int color);
-
-int		is_walkable(t_cub3D *game, float new_x, float new_y);
-
-void	update(t_cub3D *game);
-
-void	reset(int keycode, t_cub3D *game);
-
-int		ft_moving(int keycode, t_cub3D *game);
-
-/* ************************************** */
-
-void	castAllRays(t_cub3D *game);
-
-void 	render_rays(t_cub3D *game);
-
-float	normalize_angle(float x);
-
-/* Printing */
-
+// Main function to print error.
 void	ft_errors(t_cub3D *game, char *msg);
 
+// Function that print map info.
 void	print_map_info(t_map *map);
 
+// Function that print player info.
+void	print_player_info(t_player *player);
+
+/* rendering functions */
+
 int		ft_exit(t_cub3D *game);
+
+int		ft_moving(int keycode, t_cub3D *game);
+int 	is_walkable(t_cub3D *game, float new_x, float new_y);
+void	my_mlx_pixel_put(t_cub3D *game, float x, float y, int color);
+void    render_map(t_cub3D *game);
+void    render_map_2(t_cub3D *game);
+void    render_circle(t_cub3D *game, int cx, int cy, int radius, int color);
+void    render_square(t_cub3D *game, float x, float y, int color);
+void    render_line(t_cub3D *game, int cx, int cy, int length, int color);
+
+float	normalize_angle(float angle);
+int		get_y_index(float y);
+int		get_x_index(t_cub3D *game, float y, float yint, int id);
+float	*find_walls(t_cub3D *game, float *x, float *y, int id);
+void	cast(t_cub3D *game, int id);
+void	render_ray(t_cub3D *game, float ray_angle, int color);
+void 	render_rays(t_cub3D *game);
+int		facingdown(t_cub3D *game, int id);
+int		facingright(t_cub3D *game, int id);
+void	castAllRays(t_cub3D *game);
 
 #endif

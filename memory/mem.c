@@ -6,7 +6,7 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/08/25 12:32:20 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/08/26 11:44:29 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/09/13 20:39:33 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,11 +34,14 @@ void	free_double(char **s)
 	free(s);	
 }
 
-char	*freeing_join(char *s, char *s1)
+char	*free_and_join(char *line, char **lines)
 {
-	if (s1)
-		free(s1);
-	return (s);
+	char	*ret;
+
+	ret = ft_strjoin(*lines, line);
+	if (*lines)
+		free(*lines);
+	return (ret);
 }
 
 void	clean_cub3D(t_cub3D *game)

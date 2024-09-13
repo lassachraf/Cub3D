@@ -5,86 +5,12 @@
 /*                                                    +:+ +:+         +:+     */
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2024/08/26 10:08:41 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/08/26 10:19:52 by alassiqu         ###   ########.fr       */
+/*   Created: 2024/09/06 11:44:16 by alassiqu          #+#    #+#             */
+/*   Updated: 2024/09/06 14:35:50 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "../cub3D.h"
-
-int	is_valid_element(t_cub3D *game, t_map *map, char c)
-{
-	if (c == ' ' || c == '1' || c == '0' || c == 'D')
-		return (1);
-	else if (c == 'W' || c == 'N' || c == 'S' || c == 'E')
-	{
-		if (c == 'W')
-			map->w++;
-		else if (c == 'N')
-			map->n++;
-		else if (c == 'E')
-			map->e++;
-		else if (c == 'S')
-			map->s++;
-		return (1);
-	}
-	else
-		ft_errors(game, "Error 8.");
-	return (0);
-}
-
-void	check_first_element(t_cub3D *game, char **map, int *j, int *k)
-{
-	skip_whitespaces(map[*j], k);
-	if (map[*j][*k] != '1')
-		ft_errors(game, "Error 7.");
-}
-
-int	check_last_element(t_cub3D *game, char *s)
-{
-	int	i;
-
-	i = ft_strlen(s) - 1;
-	if (ft_isspace(s[i]))
-	{
-		while (s[i] && ft_isspace(s[i]))
-			i--;
-	}
-	if (s[i] == '1')
-		return (1);
-	else
-		ft_errors(game, "Error 86.");
-	return (1);
-}
-
-void	check_surrounded(t_cub3D *game, char **map, int nb_line, int col_len)
-{
-	int	i;
-	int	j;
-
-	i = -1;
-	while (++i < nb_line)
-	{
-		j = -1;
-		while (++j < col_len)
-		{
-			if (map[i][j] == '0' || map[i][j] == 'D')
-			{
-				if (i == 0 || i == nb_line - 1 || j == 0 || j == col_len - 1)
-					ft_errors(game, "Error 407.");
-				if (map[i - 1][j] == ' ' || map[i + 1][j] == ' ' || map[i][j
-					- 1] == ' ' || map[i][j + 1] == ' ')
-					ft_errors(game, "Error 408.");
-			}
-			if (map[i][j] == 'D')
-			{
-				if (!((map[i - 1][j] == '1' && map[i + 1][j] == '1') || map[i][j
-						- 1] == '1' || map[i][j + 1] == '1'))
-					ft_errors(game, "Error 409.");
-			}
-		}
-	}
-}
 
 char	*ft_strncpy_2(char *dest, char *src, unsigned int n)
 {
@@ -103,4 +29,83 @@ char	*ft_strncpy_2(char *dest, char *src, unsigned int n)
 	}
 	dest[i] = 0;
 	return (dest);
+}
+
+void	alloc_and_fill_map(t_cub3D *game, t_map *map)
+{
+	int		i;
+	int		j;
+	char	**ret;
+	char	**cpy_map;
+
+	i = 0;
+	j = 0;
+	cpy_map = &map->file[map->start];
+	ret = ft_malloc(game, (sizeof(char *) * (map->height + 1)));
+	while (cpy_map[i] && i < map->height)
+	{
+		ret[i] = ft_malloc(game, sizeof(char) * (map->width + 1));
+		ft_strncpy_2(ret[i++], cpy_map[j++], map->width);
+	}
+	ret[map->height] = 0;
+	map->map = ret;
+}
+
+void	general_check(t_cub3D *game, t_map *maps, int *i, int *j)
+{
+	char	**s;
+
+	s = maps->map;
+	if (s[*i][*j] == '0' || s[*i][*j] == 'D' || is_it_player(s[*i][*j]))
+	{
+		if (*i == 0 || *i == maps->height - 1 || *j == 0
+			|| *j == maps->width - 1)
+			ft_errors(game, "Error GC0.");
+		if (s[(*i) - 1][*j] == ' ' || s[(*i) + 1][*j] == ' ' || s[*i][*j
+			- 1] == ' ' || s[*i][*j + 1] == ' ')
+			ft_errors(game, "Error GC1.");
+	}
+	if (s[*i][*j] == 'D')
+	{
+		if (!((s[*i - 1][*j] == '1' && s[*i + 1][*j] == '1') || s[*i][*j
+				- 1] == '1' || s[*i][*j + 1] == '1'))
+			ft_errors(game, "Error GC2.");
+	}
+}
+
+void	check_surrounded(t_cub3D *game, t_map *maps)
+{
+	int	i;
+	int	j;
+
+	i = -1;
+	while (++i < maps->height)
+	{
+		j = -1;
+		while (++j < maps->width)
+		{
+			general_check(game, maps, &i, &j);
+		}
+	}
+}
+
+void	parse_line(t_cub3D *game, t_map *map, char **line)
+{
+	char	**value;
+
+	value = NULL;
+	if (*line[0] == '\n' && map->counter == 6)
+	{
+		free(*line);
+		*line = ft_strdup(" \n");
+		return ;
+	}
+	value = ft_split(*line, ' ');
+	if (!value)
+		return ;
+	add_split_to_gc(game, value);
+	if (map->counter < 6 && !textures_and_colors_element(game, map, value))
+		ft_errors(game, "Error on parsing.");
+	if (map->counter > 6)
+		ft_errors(game, "Error on parsing.");
 }

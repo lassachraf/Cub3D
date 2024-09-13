@@ -5,8 +5,8 @@
 #                                                     +:+ +:+         +:+      #
 #    By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
-#    Created: 2024/08/12 17:38:15 by alassiqu          #+#    #+#              #
-#    Updated: 2024/08/29 16:34:35 by alassiqu         ###   ########.fr        #
+#    Created: 2024/09/06 11:36:40 by alassiqu          #+#    #+#              #
+#    Updated: 2024/09/07 10:12:33 by alassiqu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -26,19 +26,24 @@ GNL			:=	get-next-line/get_next_line_utils.c		\
 MEMORY		:=	memory/memory.c							\
 				memory/mem.c
 
-PARSING		:=	parsing/colors.c						\
-				parsing/file_parsing.c					\
-				parsing/map_element.c					\
-				parsing/map_parsing.c					\
-				parsing/map_utils.c
+PARSING		:=	parsing/colors_textures_utils.c			\
+				parsing/map_utils.c						\
+				parsing/parsing_utils.c					\
+				parsing/parsing.c						\
+				parsing/player_utils.c
 
-MAP			:=	map/rendering.c							\
-				map/utils.c
+RENDERING	:=	rendering/rays_things.c							\
+				rendering/render_map.c							\
+				rendering/render_utils.c
+
+PRINTING	:=	printing.c
 
 SRCS		:=	$(GNL)									\
 				$(MAP)									\
 				$(MEMORY)								\
 				$(PARSING)								\
+				$(RENDERING)							\
+				$(PRINTING)								\
 				cub3D.c
 
 OBJS		:=	$(SRCS:.c=.o)
