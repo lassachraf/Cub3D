@@ -6,7 +6,7 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 11:44:16 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/09/06 14:35:50 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/09/15 10:09:38 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,16 +60,16 @@ void	general_check(t_cub3D *game, t_map *maps, int *i, int *j)
 	{
 		if (*i == 0 || *i == maps->height - 1 || *j == 0
 			|| *j == maps->width - 1)
-			ft_errors(game, "Error GC0.");
-		if (s[(*i) - 1][*j] == ' ' || s[(*i) + 1][*j] == ' ' || s[*i][*j
-			- 1] == ' ' || s[*i][*j + 1] == ' ')
-			ft_errors(game, "Error GC1.");
+			ft_errors(game, "Error: unsurrounded map.");
+		if (s[(*i) - 1][*j] == ' ' || s[(*i) + 1][*j] == ' '
+			|| s[*i][*j - 1] == ' ' || s[*i][*j + 1] == ' ')
+			ft_errors(game, "Error: invalid map.");
 	}
 	if (s[*i][*j] == 'D')
 	{
-		if (!((s[*i - 1][*j] == '1' && s[*i + 1][*j] == '1') || s[*i][*j
-				- 1] == '1' || s[*i][*j + 1] == '1'))
-			ft_errors(game, "Error GC2.");
+		if (!((s[*i - 1][*j] == '1' && s[*i + 1][*j] == '1')
+			|| (s[*i][*j - 1] == '1' && s[*i][*j + 1] == '1')))
+			ft_errors(game, "Error: useless door position.");
 	}
 }
 
@@ -83,9 +83,7 @@ void	check_surrounded(t_cub3D *game, t_map *maps)
 	{
 		j = -1;
 		while (++j < maps->width)
-		{
 			general_check(game, maps, &i, &j);
-		}
 	}
 }
 
@@ -105,7 +103,7 @@ void	parse_line(t_cub3D *game, t_map *map, char **line)
 		return ;
 	add_split_to_gc(game, value);
 	if (map->counter < 6 && !textures_and_colors_element(game, map, value))
-		ft_errors(game, "Error on parsing.");
+		ft_errors(game, "Error: invalid texture.");
 	if (map->counter > 6)
-		ft_errors(game, "Error on parsing.");
+		ft_errors(game, "Error: duplicated texture.");
 }

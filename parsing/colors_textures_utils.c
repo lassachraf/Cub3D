@@ -6,7 +6,7 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 11:46:07 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/09/06 14:36:01 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/09/14 19:48:07 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,34 +18,32 @@ int	ft_atoi_rgb(t_cub3D *game, char *str)
 
 	nb = 0;
 	if (!str)
-		ft_errors(game, "Error on rgb atoi.");
+		ft_errors(game, "Error: color don't have a value.");
 	while (*str && ft_isspace(*str))
 		str++;
 	if (*str == '-')
-		ft_errors(game, "Error negative color.");
+		ft_errors(game, "Error: negative number color.");
 	if (*str == '+')
 		str++;
 	while (ft_isdigit(*str))
 	{
 		nb = (nb * 10) + (((*str) - '0'));
 		if (nb > 255)
-			ft_errors(game, "Error higher color value.");
+			ft_errors(game, "Error: higher color value.");
 		str++;
 	}
 	if (*str && !ft_isdigit(*str) && !ft_isspace(*str))
-		ft_errors(game, "Error on rgb atoi.");
+		ft_errors(game, "Error: color error.");
 	return (nb);
 }
 
 int	ft_colors(t_cub3D *game, char *s)
 {
 	char	**split;
-	int		t;
 	int		r;
 	int		g;
 	int		b;
 
-	t = 0;
 	split = ft_split(s, ',');
 	add_split_to_gc(game, split);
 	r = ft_atoi_rgb(game, split[0]);
@@ -54,9 +52,10 @@ int	ft_colors(t_cub3D *game, char *s)
 	if (split[3])
 	{
 		free_double(split);
-		return (ft_errors(game, "Error on ft_colors."), 1);
+		ft_errors(game, "Error: color should be like 'R,G,B'.");
+		return (1);
 	}
-	return (t << 24 | r << 16 | g << 8 | b);
+	return (0 << 24 | r << 16 | g << 8 | b);
 }
 
 void    set_texture(t_cub3D *game, t_map *map, char *texture, int flag)
@@ -83,7 +82,7 @@ void    set_texture(t_cub3D *game, t_map *map, char *texture, int flag)
 		map->w++;
 	}
 	else
-		ft_errors(game, "Error on setting textures.");
+		ft_errors(game, "Error: duplicated texture.");
 	map->counter = map->e + map->s + map->n + map->w + map->f + map->c;
 }
 
@@ -100,7 +99,7 @@ void    set_color(t_cub3D *game, t_map *map, char *color, int flag)
 		map->c++;
 	}
 	else
-		ft_errors(game, "Error on setting colors");
+		ft_errors(game, "Error: duplicated color.");
 	map->counter = map->e + map->s + map->n + map->w + map->f + map->c;
 }
 
@@ -128,5 +127,5 @@ int	textures_and_colors_element(t_cub3D *game, t_map *map, char **line)
 		return (1);
 	}
 	else
-		return (ft_errors(game, "Error on textures/colors."), 0);
+		return (0);
 }

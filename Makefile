@@ -6,7 +6,7 @@
 #    By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2024/09/06 11:36:40 by alassiqu          #+#    #+#              #
-#    Updated: 2024/09/07 10:12:33 by alassiqu         ###   ########.fr        #
+#    Updated: 2024/09/14 17:24:07 by alassiqu         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -32,8 +32,8 @@ PARSING		:=	parsing/colors_textures_utils.c			\
 				parsing/parsing.c						\
 				parsing/player_utils.c
 
-RENDERING	:=	rendering/rays_things.c							\
-				rendering/render_map.c							\
+RENDERING	:=	rendering/rays_things.c					\
+				rendering/render_map.c					\
 				rendering/render_utils.c
 
 PRINTING	:=	printing.c

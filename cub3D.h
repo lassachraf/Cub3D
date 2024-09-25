@@ -6,7 +6,7 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/05 14:58:06 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/09/13 20:40:21 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/09/14 17:29:31 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,11 +23,9 @@
 # include <math.h>
 
 # define	PI			3.14159265358979323846
-# define	RED			"\033[1;31m"	// for errors !
-# define	RESET		"\033[0m"		// color reset !
+# define	RED			"\033[1;31m"
+# define	RESET		"\033[0m"
 # define	TILE_SIZE	32
-
-// # define	WALL_STRIP	4
 
 # define	ESC_KEY		65307
 
@@ -79,15 +77,15 @@ typedef struct	s_player
 
 typedef struct	s_ray
 {
-    float   	distance;
+	float		distance;
 	float		ray_angle;
 	int			facing_up;
-    float   	wall_hit_x;
-    float   	wall_hit_y;
+	float		wall_hit_x;
+	float		wall_hit_y;
 	int			facing_down;
 	int			facing_left;
 	int			facing_right;
-}           	t_ray;
+}				t_ray;
 
 typedef	struct s_rays
 {

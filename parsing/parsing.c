@@ -6,7 +6,7 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/06 11:42:13 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/09/13 20:39:09 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/09/15 10:09:52 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,14 +23,14 @@ void	ft_get_map(t_cub3D *game, t_map *map)
 		map->start++;
 	i = map->start;
 	if (!content[i])
-		ft_errors(game, "Error getting map.");
+		ft_errors(game, "Error: map error.");
 	while (content[i])
 	{
 		j = 0;
 		while (content[i][j] && is_map_element(content[i][j]))
 			j++;
-		if (is_map_element(content[i][j]))
-			ft_errors(game, "Error on map element.");
+		if (content[i][j] && !is_map_element(content[i][j]))
+			ft_errors(game, "Error: invalid map element.");
 		if (map->width < j)
 			map->width = j;
 		i++;
@@ -64,7 +64,7 @@ void	ft_get_player(t_cub3D *game, t_player *player)
 		}
 	}
 	if (player->count != 1)
-		ft_errors(game, "Error more than one player.");
+		ft_errors(game, "Error: should have 1 player.");
 	adjust_rotation(player, game->map->map);
 	game->player = player;
 }
@@ -89,7 +89,7 @@ void	store_file_content(t_cub3D *game, t_map *map, t_player *player)
 		line = get_next_line(map->fd);
 	}
 	if (!lines)
-		ft_errors(game, "Error P3.");
+		ft_errors(game, "Error: nothing to be readed.");
 	file = ft_split(lines, '\n');
 	free(lines);
 	add_split_to_gc(game, file);
@@ -98,12 +98,12 @@ void	store_file_content(t_cub3D *game, t_map *map, t_player *player)
 	ft_get_player(game, player);
 }
 
-void	ft_whole_map(t_cub3D *game, t_map *map, t_player *player, char *mapfile)
+void	ft_whole_parsing(t_cub3D *game, t_map *map, t_player *player, char *mapfile)
 {
 	ft_extension(game, mapfile, ".cub");
 	map->fd = open(mapfile, O_RDONLY);
 	if (map->fd < 0)
-		ft_errors(game, "Error P1.");
+		ft_errors(game, "Error: opening file failed.");
 	store_file_content(game, map, player);
 	close(map->fd);
 }
@@ -123,6 +123,8 @@ t_cub3D	*parsing(t_cub3D *game, char *av)
 		ft_errors(game, "Allocation failed.");
 	ft_bzero(player, sizeof(t_player));
 	gc_add(game, player);
-	ft_whole_map(game, map, player, av);
+	ft_whole_parsing(game, map, player, av);
+	print_map_info(map);
+	print_player_info(player);
 	return (game);
 }

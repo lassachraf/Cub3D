@@ -6,26 +6,11 @@
 /*   By: alassiqu <alassiqu@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2024/09/05 14:58:16 by alassiqu          #+#    #+#             */
-/*   Updated: 2024/09/06 15:27:42 by alassiqu         ###   ########.fr       */
+/*   Updated: 2024/09/14 18:42:15 by alassiqu         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "cub3D.h"
-
-long	deg_to_rad(long deg)
-{
-	return (deg * (PI / 180));
-}
-
-long	rad_to_deg(long rad)
-{
-	return (rad * (180 / PI));
-}
-
-long	twopointsdistance(int ax, int ay, int bx, int by)
-{
-	return (sqrt(pow((bx - ax), 2) + pow((by - ay), 2)));
-}
 
 int	ft_exit(t_cub3D *game)
 {
@@ -63,11 +48,8 @@ int	main(int ac, char **av)
 	if (!game)
 		ft_errors(NULL, "Allocation failed.");
 	ft_bzero(game, (sizeof(t_cub3D)));
-	game->gc = NULL;
 	game = parsing(game, av[1]);
 	printf("** parsing jamil **\n");
-	game->fov_ang = deg_to_rad(60);
-	cub3D(game);
 	clean_cub3D(game);
 	return (0);
 }
